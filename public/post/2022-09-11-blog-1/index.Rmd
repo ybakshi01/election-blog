@@ -1,5 +1,5 @@
 ---
-title: Blog 1
+title: 2022 Midterm Forecast Introduction
 author: Y. Amiel Bakshi
 date: '2022-09-11'
 slug: []
@@ -7,6 +7,16 @@ categories: []
 tags: []
 ---
 
+*This blog is part of a series related to Gov 1347: Election Analytics, a course at Harvard University taught by Professor [Ryan D. Enos](https://http://ryandenos.com/).*
+
+
+From now until November 3, I will be updating this weekly blog series with my 2022 US midterm election prediction model. For this first blog, I’ll be comparing the 2012 House election results to the 2014 House Midterm election results to find any trends in the data during a democratic presidential term. More specifically, I’ll be diving into the change seen from a presidential election year where a Democratic president was re-elected to the subsequent midterm election year and using that as a preliminary basis on what to base this year's midterm forecasts on as we see a Democrat incumbent president this midterm year. 
+
+
+This forecast will seek to answer the question, **How do Democrats perform in the midterm elections when they are the incumbent party?**
+
+
+This analysis predicts that the party of the incumbent president typically performs poorly during the midterm elections and Democratic Party presidents are no exception. It is common knowledge among many political scientists, politicians, and pollsters that the incumbent party always does worse during the midterm election than in the presidential election and this analysis shows that this is true for Obama in 2012 and 2014 and is potentially what we can expect to see this year in 2022^1^.
 
 ```{r, echo = FALSE, results='hide',fig.keep='all', message=FALSE}
 ## make map of vote share by state and CD
@@ -30,7 +40,6 @@ popvote_df <- read_csv("house nationwide vote and seat share by party 1948-2020.
 
 theme_map <- function() {
   theme(
-    
     legend.position = "right",
     panel.grid = element_blank(),
     axis.text.x = element_blank(),
@@ -64,8 +73,8 @@ h <- house_party_vote_share_by_district_1948_2020
 
 # Part 1
 
-voteshare2008 <- h %>%
-  filter(raceYear == 2008) %>%
+voteshare2012 <- h %>%
+  filter(raceYear == 2012) %>%
   select(raceYear, State, district_num, district_id, RepVotes, DemVotes) %>%
   # summarize party vote share by state
   group_by(State) %>%
@@ -78,14 +87,15 @@ voteshare2008 <- h %>%
   rename(state = State)
 
 # Plot US map
-plot_usmap(data = voteshare2008, regions = "state", labels = TRUE, values = "votemargin_st") + 
+plot_usmap(data = voteshare2012, regions = "state", labels = TRUE, values = "votemargin_st") + 
   scale_fill_gradient2(low = "blue", mid="white", high = "red", name = "Voteshare Margin", limits = c(-1,1)) +
   labs(
-    title = "The 2008 Election Vote Share for The Two Major Parties",
-    subtitle = "Red represents a larger vote share for Republicans and blue represents a larger vote share for Democrats") +
+    title = "The 2012 Election Vote Share",
+    subtitle = "Red represents a larger vote share for Republicans and blue for Democrats") +
   theme_map()
 
 ```
+The Democrats can be seen to perform okay in the 2012 House elections with a number of states having vote-shares favorable toward the Democrats compared to the 2010 election. This can also be observed by the Democrats picking up 8 seats in the House since 2010, although they are still the minority party in the House with the Republicans still on 234 seats. There are a number of states that show no tilt in vote-share toward either the Democrats or Republicans in this year such as Nevada, Colorado, Iowa, Wisconsin, Pennsylvania, Virginia, and North Carolina. There is a strong vote share for Republicans in Wyoming, Kansas, and Louisiana, and a strong vote share for Democrats in Massachusetts, Vermont, Delaware, and Maryland. This was a year in which a Democratic President was re-elected yet still did not have a majority in the House.
 
 ```{r, echo = FALSE, results='hide',fig.keep='all', message=FALSE}
 
@@ -110,7 +120,7 @@ plot_usmap(data = voteshare2014, regions = "state", labels = TRUE, values = "vot
   scale_fill_gradient2(low = "blue", mid="white", high = "red", name = "2008 Voteshare Margin", limits = c(-1,1)) +
   labs(
     title = "The 2014 Midterm Election Vote Share",
-    subtitle = "Red represents a larger vote share for Republicans and blue represents a larger vote share for Democrats") +
+    subtitle = "Red represents a larger vote share for Republicans and blue for Democrats") +
   theme_map()
 
 
@@ -151,4 +161,20 @@ ggplot() +
         axis.text.y=element_blank(),
         axis.ticks.y=element_blank())
 ```
+
+The 2014 midterm elections show a different story compared to 2012. The states that previously had no tilt in vote share toward either the Democrats or the Republicans now **all** show a higher vote share for the Republicans, suggesting that the Republicans actually performed better in these battleground states than they did in 2012, thus beating the Democrats. The Democrats still held onto some states, however, their vote shares in these states did in fact decrease since 2012 as can be seen by lighter blues in the map suggesting that the Democrats did not perform as well as they did in the 2012 election, both in states that they lost but also in states that they typically win^2^.
+
+
+When looking at the map of congressional districts in 2014, it can be seen that much of the Democrat vote share in 2014 is largely concentrated in urban areas and the Republicans have the upper-hand elsewhere. This is fairly common in elections where the Democrats perform much better in cities and urban cores and Republicans do better in more rural population areas^3^. Urban cores can be seen to have much more concentrated huge support for the Democrats with some reaching nearly 100% support, yet the rest of states outside of cities has more support for Republicans than Democrats, therefore making states tilt more Republican in 2014.
+
+
+By looking at the 2012 and 2014 vote share results, we can see that the Democrats performed worse in the midterm election than in the presidential election with the Republicans achieving a higher vote share than the Democrats in all of the battleground swing states and in previously safe Democratic states where they decreased the Democrat's majority vote share in those states. This reaffirms political pundits and politicians' views that the incumbent party always performs poorly in midterm elections and 2012-2014 is no exception. By applying this to the 2022 election, we can expect the Democrats, as the current incumbent party, to perform worse than in the 2020 election in which they gained the trifecta of the House, the Senate, and the presidency.
+
+---
+
+References
+
+[1] McCarthy, Niall. n.d. “Historically, The President’s Party Performs Poorly In The Midterms [Infographic].” Forbes. Accessed September 15, 2022. https://www.forbes.com/sites/niallmccarthy/2018/10/09/historically-the-presidents-party-performs-poorly-in-the-midterms-infographic/.
+[2] Rotondi, Jessica Pearce. n.d. “What Are Swing States and How Did They Become a Key Factor in US Elections?” HISTORY. Accessed September 15, 2022. https://www.history.com/news/swing-states-presidential-elections.
+[3] Thompson, Derek. 2020. “Why Big-City Dominance Is a Problem for Democrats.” The Atlantic. November 26, 2020. https://www.theatlantic.com/ideas/archive/2020/11/why-big-city-dominance-problem-democrats/617161/.
 
