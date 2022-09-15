@@ -2,17 +2,17 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Amiel&#39;s Election Analytics Blog</title>
-    <link>http://example.org/</link>
+    <link>https://ybakshi01.github.io/election-blog/post/</link>
     <description>Recent content on Amiel&#39;s Election Analytics Blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Sun, 11 Sep 2022 00:00:00 +0000</lastBuildDate><atom:link href="http://example.org/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sun, 11 Sep 2022 00:00:00 +0000</lastBuildDate><atom:link href="https://ybakshi01.github.io/election-blog/post/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>2022 Midterm Forecast Introduction</title>
-      <link>http://example.org/post/2022-09-11-blog-1/</link>
+      <link>https://ybakshi01.github.io/election-blog/post/post/2022-09-11-blog-1/</link>
       <pubDate>Sun, 11 Sep 2022 00:00:00 +0000</pubDate>
       
-      <guid>http://example.org/post/2022-09-11-blog-1/</guid>
+      <guid>https://ybakshi01.github.io/election-blog/post/post/2022-09-11-blog-1/</guid>
       <description>This blog is part of a series related to Gov 1347: Election Analytics, a course at Harvard University taught by Professor Ryan D. Enos.
 From now until November 3, I will be updating this weekly blog series with my 2022 US midterm election prediction model. For this first blog, I’ll be comparing the 2012 House election results to the 2014 House Midterm election results to find any trends in the data during a democratic presidential term.</description>
     </item>

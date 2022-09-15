@@ -35,18 +35,18 @@ popvote_df <- read_csv("house nationwide vote and seat share by party 1948-2020.
 
 theme_map <- function() {
   theme(
-    
     legend.position = "right",
     panel.grid = element_blank(),
     axis.text.x = element_blank(),
     axis.text.y = element_blank(),
     axis.title.x = element_blank(),
     axis.title.y = element_blank(),
+    axis.ticks.x= element_blank(),
+    axis.ticks.y= element_blank(),
     legend.text = element_text(size = 10),
     legend.title = element_text(size = 10),
     plot.title = element_text(size = 20),
     plot.subtitle = element_text(size = 8))
-  
 }
 
 ```
@@ -282,12 +282,6 @@ ggplot() +
   labs(
     title = "The 2014 Midterm Election Vote Share by Congressional District",
     subtitle = "Red represents a larger vote share for Republicans and blue represents a larger vote share for Democrats") +
-  theme_void() +
-  theme(axis.title.x=element_blank(),
-        axis.text.x=element_blank(),
-        axis.ticks.x=element_blank(),
-        axis.title.y=element_blank(),
-        axis.text.y=element_blank(),
-        axis.ticks.y=element_blank())
+  theme_map()
 ```
 

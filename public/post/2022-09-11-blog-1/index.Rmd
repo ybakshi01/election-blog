@@ -46,11 +46,12 @@ theme_map <- function() {
     axis.text.y = element_blank(),
     axis.title.x = element_blank(),
     axis.title.y = element_blank(),
+    axis.ticks.x= element_blank(),
+    axis.ticks.y= element_blank(),
     legend.text = element_text(size = 10),
     legend.title = element_text(size = 10),
     plot.title = element_text(size = 20),
     plot.subtitle = element_text(size = 8))
-  
 }
 
 ```
@@ -173,6 +174,7 @@ By looking at the 2012 and 2014 vote share results, we can see that the Democrat
 
 
 
+
 ---
 
 
@@ -183,6 +185,7 @@ The data sources used in this analysis come from the GOV 1347 repository and wer
 
 
 [The project repository can be viewed here.](https://github.com/ybakshi01/election-blog/tree/main/content/post)
+
 
 
 
