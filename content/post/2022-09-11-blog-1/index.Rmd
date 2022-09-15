@@ -8,7 +8,7 @@ tags: []
 ---
 
 
-```{r, echo = FALSE}
+```{r, echo = FALSE, results='hide',fig.keep='all'}
 ## make map of vote share by state and CD
 # start with 114th congress - 2014 election
 # required packages
@@ -25,7 +25,7 @@ popvote_df <- read_csv("house nationwide vote and seat share by party 1948-2020.
 
 ```
 
-```{r, echo = FALSE}
+```{r, echo = FALSE, results='hide',fig.keep='all'}
 # Creating Custom GGPlot theme
 
 theme_map <- function() {
@@ -47,12 +47,12 @@ theme_map <- function() {
 ```
 
 
-```{r, echo=FALSE, eval=TRUE}
+```{r, echo=FALSE, eval=TRUE, results='hide',fig.keep='all'}
 # load geographic data
 cd114 <- st_read("districtShapes/districts114.shp", quiet = TRUE)
 ```
 
-```{r, echo = FALSE}
+```{r, echo = FALSE, results='hide',fig.keep='all'}
 # load election data
  house_party_vote_share_by_district_1948_2020 <-
    read_csv("house party vote share by district 1948-2020.csv")
@@ -60,10 +60,7 @@ cd114 <- st_read("districtShapes/districts114.shp", quiet = TRUE)
 h <- house_party_vote_share_by_district_1948_2020
 ```
 
-
-Blog Extension
-
-```{r, echo = FALSE}
+```{r, echo = FALSE, results='hide',fig.keep='all'}
 
 # Part 1
 
@@ -90,7 +87,7 @@ plot_usmap(data = voteshare2008, regions = "state", labels = TRUE, values = "vot
 
 ```
 
-```{r, echo = FALSE}
+```{r, echo = FALSE, results='hide',fig.keep='all'}
 
 # Part 2
 
@@ -142,7 +139,7 @@ ggplot() +
   geom_sf(data=districts_simp,aes(fill=votemargin_st),
           inherit.aes=FALSE,alpha=0.9) +
   coord_sf(xlim = c(-172.27, -66.57), ylim = c(18.55, 71.23), expand = FALSE)+
-  scale_fill_gradient2(low = "blue", mid = "white", high = "red", limits=c(-100,100)) + 
+  scale_fill_gradient2(low = "blue", mid = "white", high = "red", name = "Voteshare Margin", limits=c(-100,100)) + 
   labs(
     title = "The 2014 Midterm Vote Share by Congressional District",
     subtitle = "Red represents a larger vote share for Republicans and blue for Democrats") +
