@@ -1,0 +1,293 @@
+---
+title: "01-introduction"
+author: "Amiel Bakshi"
+date: "9/13/2022"
+output: pdf_document
+---
+
+```{r setup, echo = FALSE}
+# set working directory first always
+install.packages("rmapshaper")
+install.packages("readr")
+install.packages("sf")
+
+```
+
+```{r, echo = FALSE}
+## make map of vote share by state and CD
+# start with 114th congress - 2014 election
+# required packages
+library(tidyverse)
+library(usmap)
+library(rmapshaper)
+library(readr)
+
+require(tidyverse)
+require(ggplot2)
+require(sf)
+
+popvote_df <- read_csv("house nationwide vote and seat share by party 1948-2020.csv")
+
+```
+
+```{r}
+# Creating Custom GGPlot theme
+
+theme_map <- function() {
+  theme(
+    
+    legend.position = "right",
+    panel.grid = element_blank(),
+    axis.text.x = element_blank(),
+    axis.text.y = element_blank(),
+    axis.title.x = element_blank(),
+    axis.title.y = element_blank(),
+    legend.text = element_text(size = 10),
+    legend.title = element_text(size = 10),
+    plot.title = element_text(size = 20),
+    plot.subtitle = element_text(size = 8))
+  
+}
+
+```
+
+
+```{r, echo=TRUE, eval=TRUE}
+
+# load geographic data
+cd114 <- st_read("districtShapes/districts114.shp", quiet = TRUE)
+```
+
+```{r}
+# select specific state
+cd114_nj <- cd114 %>%
+
+filter(STATENAME=="New Jersey") %>%
+      mutate(DISTRICT = as.character(DISTRICT))%>%
+      select(DISTRICT)
+
+# add data to plot - 2014 GOP party seat share
+
+# reload election data - h from previous exercise
+ house_party_vote_share_by_district_1948_2020 <-
+   read_csv("house party vote share by district 1948-2020.csv")
+ 
+h <- house_party_vote_share_by_district_1948_2020
+
+# filter for 2014 election and state
+R_nj_2014 <- h %>%
+  filter(raceYear == 2014, State == "New Jersey") %>%
+  select(raceYear, State, district_num, RepVotesMajorPercent, DemVotesMajorPercent) %>%
+  # summarize party vote share by district
+  group_by(district_num) %>%
+  summarise(Rep_votes_pct = RepVotesMajorPercent) %>%
+  # rename district variable name to match shapefile
+  rename(DISTRICT = district_num)
+
+# before joining dfs, check classes of variable to be merged on
+class(R_nj_2014$DISTRICT)
+
+class(cd114_nj$DISTRICT)
+
+# change classics
+cd114_nj$DISTRICT <- as.numeric(cd114_nj$DISTRICT)
+
+# join election returns with shapefiles
+cd114_nj <- cd114_nj %>% left_join(R_nj_2014, by="DISTRICT")
+cd114_nj
+
+```
+
+```{r}
+# time to map!
+ggplot() +
+  geom_sf(data=cd114_nj,aes(fill=Rep_votes_pct),
+        inherit.aes=FALSE,alpha=0.9) +
+  scale_fill_gradient(low = "white", high = "black", limits=c(10,80)) +
+  theme_void() +
+  theme(axis.title.x=element_blank(),
+    axis.text.x=element_blank(),
+    axis.ticks.x=element_blank(),
+    axis.title.y=element_blank(),
+    axis.text.y=element_blank(),
+    axis.ticks.y=element_blank())
+```
+
+```{r}
+## make map of GOP vote share by state (national) - 2014
+# use h dataset from earlier
+# house_party_vote_share_by_district_1948_2020 <-
+  # read_csv("house party vote share by district 1948-2020.csv")
+# h <- house_party_vote_share_by_district_1948_2020
+
+# filter for relevant variables
+R_2014 <- h %>%
+  filter(raceYear == 2014) %>%
+  select(raceYear, State, district_num, district_id, RepVotes, DemVotes) %>%
+  # summarize party vote share by state
+  group_by(State) %>%
+  # mutate Rep vote margin by state %>%
+  mutate(R_votemargin_st = (sum(RepVotes))/
+           sum(RepVotes + DemVotes),
+         D_votemargin_st = (sum(DemVotes))/
+           sum(RepVotes + DemVotes)) %>%
+  rename(state = State)
+
+# load usmap
+# install.packages('plot_usmap')
+# install.packages("usmap")
+#library(usmap)
+
+states_map <- usmap::us_map()
+unique(states_map$abbr)
+```
+
+```{r}
+# plot
+plot_usmap(data = R_2014, regions = "states", values = "R_votemargin_st") +
+  scale_fill_gradient(low = "white", high = "red", name = "GOP two-party voteshare margin") +
+  theme_void()
+```
+
+```{r}
+## map across all election years
+# filter for relevant variables
+R_all <- h %>%
+  select(raceYear, State, district_num, district_id, RepVotes, DemVotes) %>%
+  # summarize party vote share by state
+  group_by(State) %>%
+  # mutate Rep vote margin by state %>%
+  mutate(R_votemargin_st = (sum(RepVotes))/
+           sum(RepVotes + DemVotes),
+         D_votemargin_st = (sum(DemVotes))/
+           sum(RepVotes + DemVotes)) %>%
+  rename(state = State)
+
+# plot
+plot_usmap(data = R_all, regions = "states", values = "R_votemargin_st") +
+  facet_wrap(facets = raceYear ~.) +
+  scale_fill_gradient(low = "white", high = "red", name = "GOP two-party voteshare margin") +
+  theme_void()
+```
+
+Blog Extension
+
+```{r}
+
+voteshare2008 <- h %>%
+  filter(raceYear == 2008) %>%
+  select(raceYear, State, district_num, district_id, RepVotes, DemVotes) %>%
+  # summarize party vote share by state
+  group_by(State) %>%
+  # mutate Rep vote margin by state %>%
+  mutate(R_votemargin_st = (sum(RepVotes))/
+           sum(RepVotes + DemVotes),
+         D_votemargin_st = (sum(DemVotes))/
+           sum(RepVotes + DemVotes), 
+        votemargin_st = R_votemargin_st - D_votemargin_st) %>%
+  rename(state = State)
+
+# Plot US map
+plot_usmap(data = voteshare2008, regions = "state", labels = TRUE, values = "votemargin_st") + 
+  scale_fill_gradient2(low = "blue", mid="white", high = "red", name = "Voteshare Margin", limits = c(-1,1)) +
+  labs(
+    title = "The 2008 Election Vote Share for The Two Major Parties",
+    subtitle = "Red represents a larger vote share for Republicans and blue represents a larger vote share for Democrats") +
+  theme_map()
+
+```
+
+```{r}
+
+# Part 2
+
+voteshare2014 <- h %>%
+  filter(raceYear == 2014) %>%
+  select(raceYear, State, district_num, district_id, RepVotes, DemVotes) %>%
+  # summarize party vote share by state
+  group_by(State) %>%
+  # mutate Rep vote margin by state %>%
+  mutate(R_votemargin_st = (sum(RepVotes))/
+           sum(RepVotes + DemVotes),
+         D_votemargin_st = (sum(DemVotes))/
+           sum(RepVotes + DemVotes), 
+        votemargin_st = R_votemargin_st - D_votemargin_st) %>%
+  rename(state = State)
+
+
+# Plot 2014 US map
+plot_usmap(data = voteshare2014, regions = "state", labels = TRUE, values = "votemargin_st") + 
+  scale_fill_gradient2(low = "blue", mid="white", high = "red", name = "2008 Voteshare Margin", limits = c(-1,1)) +
+  labs(
+    title = "The 2014 Midterm Election Vote Share for The Two Major Parties",
+    subtitle = "Red represents a larger vote share for Republicans and blue represents a larger vote share for Democrats") +
+  theme_map()
+
+
+# filter for 2014 election and state
+R_2014 <- h %>%
+    filter(raceYear == 2014) %>%
+    select(raceYear, State, district_num, RepVotesMajorPercent, DemVotesMajorPercent) %>%
+  # summarize party vote share by district
+    group_by(district_num, State) %>%
+    summarise(Rep_votes_pct = RepVotesMajorPercent) %>%
+  # rename district variable name to match shapefile
+    rename(DISTRICT = district_num, STATENAME = State)
+
+# change class
+cd114$DISTRICT <- as.numeric(cd114$DISTRICT)
+# join election returns with shapefiles
+cd114 <- cd114 %>% left_join(R_2014, by=c("DISTRICT", "STATENAME"))
+# plot with simplify (faster)
+districts_simp <- rmapshaper::ms_simplify(cd114, keep = 0.01)
+ggplot() +
+  geom_sf(data=districts_simp,aes(fill=Rep_votes_pct),
+          inherit.aes=FALSE,alpha=0.9) +
+  coord_sf(xlim = c(-172.27, -66.57), ylim = c(18.55, 71.23), expand = FALSE)+
+  scale_fill_gradient(low = "white", high = "black", limits=c(0,100)) + 
+  theme_void() +
+  theme(axis.title.x=element_blank(),
+        axis.text.x=element_blank(),
+        axis.ticks.x=element_blank(),
+        axis.title.y=element_blank(),
+        axis.text.y=element_blank(),
+        axis.ticks.y=element_blank())
+
+# COLORED MAP
+
+# filter for 2014 election and state
+vote_2014 <- h %>%
+    filter(raceYear == 2014) %>%
+    select(raceYear, State, district_num, RepVotesMajorPercent, DemVotesMajorPercent) %>%
+  # summarize party vote share by district
+    group_by(district_num, State) %>%
+    summarise(Rep_votes_pct = RepVotesMajorPercent,
+              dem_votes_pct = DemVotesMajorPercent) %>%
+    # mutate Rep vote margin by state %>%
+  mutate(votemargin_st = Rep_votes_pct - dem_votes_pct) %>%
+  # rename district variable name to match shapefile
+    rename(DISTRICT = district_num, STATENAME = State)
+
+# change class
+cd114$DISTRICT <- as.numeric(cd114$DISTRICT)
+# join election returns with shapefiles
+cd114 <- cd114 %>% left_join(vote_2014, by=c("DISTRICT", "STATENAME"))
+# plot with simplify (faster)
+districts_simp <- rmapshaper::ms_simplify(cd114, keep = 0.01)
+ggplot() +
+  geom_sf(data=districts_simp,aes(fill=votemargin_st),
+          inherit.aes=FALSE,alpha=0.9) +
+  coord_sf(xlim = c(-172.27, -66.57), ylim = c(18.55, 71.23), expand = FALSE)+
+  scale_fill_gradient2(low = "blue", mid = "white", high = "red", limits=c(-100,100)) + 
+  labs(
+    title = "The 2014 Midterm Election Vote Share by Congressional District",
+    subtitle = "Red represents a larger vote share for Republicans and blue represents a larger vote share for Democrats") +
+  theme_void() +
+  theme(axis.title.x=element_blank(),
+        axis.text.x=element_blank(),
+        axis.ticks.x=element_blank(),
+        axis.title.y=element_blank(),
+        axis.text.y=element_blank(),
+        axis.ticks.y=element_blank())
+```
+
