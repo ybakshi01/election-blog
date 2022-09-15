@@ -149,7 +149,7 @@ districts_simp <- rmapshaper::ms_simplify(cd114, keep = 0.01)
 ggplot() +
   geom_sf(data=districts_simp,aes(fill=votemargin_st),
           inherit.aes=FALSE,alpha=0.9) +
-  coord_sf(xlim = c(-172.27, -66.57), ylim = c(18.55, 71.23), expand = FALSE)+
+  coord_sf(xlim = c(-125.27, -66.57), ylim = c(22.55, 61.23), expand = FALSE)+
   scale_fill_gradient2(low = "blue", mid = "white", high = "red", name = "Voteshare Margin", limits=c(-100,100)) + 
   labs(
     title = "The 2014 Midterm Vote Share by Congressional District",
@@ -182,6 +182,9 @@ By looking at the 2012 and 2014 vote share results, we can see that the Democrat
 
 
 The data sources used in this analysis come from the GOV 1347 repository and were provided by the teaching staff.
+
+
+*(This blog was updated at 4:30pm on Thursday 09/15 to better reflect the U.S. congressional district map by removing Alaska and Hawaii for the purpose of enlarging the districts of the continental 48 states by advice from Professor Enos over Slack. The blog was already written before the Thursday 10AM deadline as can be seen on GitHub but has been updated after the deadline to show a more enlarged map.)*
 
 
 [The project repository can be viewed here.](https://github.com/ybakshi01/election-blog/tree/main/content/post)
